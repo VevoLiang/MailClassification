@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Created by Vevo on 2017/7/14.
  */
-public class VectorReducer extends Reducer<Text, Text, Text, Text> {
+public class WordInClass2Reducer extends Reducer<Text, Text, Text, Text> {
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         StringBuilder classVector = new StringBuilder();

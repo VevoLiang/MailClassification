@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by Vevo on 2017/7/14.
  */
-public class VectorMapper extends Mapper<Text, Text, Text, Text>{
+public class WordInClass2Mapper extends Mapper<Text, Text, Text, Text>{
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
         String word = key.toString().split("#")[0];
