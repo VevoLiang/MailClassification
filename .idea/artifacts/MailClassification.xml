@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MailClassification">
+    <output-path>$PROJECT_DIR$/out/artifacts/MailClassification</output-path>
+    <root id="archive" name="MailClassification.jar">
+      <element id="module-output" name="MailClassification" />
+      <element id="extracted-dir" path="D:/MyLibs/lucene-5.5.4/analysis/common/lucene-analyzers-common-5.5.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/MyLibs/lucene-5.5.4/core/lucene-core-5.5.4.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
