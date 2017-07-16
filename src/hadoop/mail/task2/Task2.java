@@ -42,6 +42,7 @@ public class Task2 {
     }
 
     private static String getTF(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+        //先计算词频次数
         Configuration conf1 = new Configuration();
         Job wordNumJob = Job.getInstance(conf1, "WordNumInDoc");
         wordNumJob.addCacheFile(classIdPath.toUri()); //类别编号文件
@@ -58,6 +59,7 @@ public class Task2 {
         FileOutputFormat.setOutputPath(wordNumJob, new Path(wordNumPath));
         wordNumJob.waitForCompletion(true);
 
+        //利用Task1保存的IDF信息计算TF-IDF
         Configuration conf2 = new Configuration();
         Job VSMJob = Job.getInstance(conf2, "TF-IDF/VSM");
         VSMJob.addCacheFile(eigenvectorPath.toUri()); //特征词文件

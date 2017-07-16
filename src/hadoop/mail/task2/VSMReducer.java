@@ -54,6 +54,7 @@ public class VSMReducer extends Reducer<Text, Text, Text, Text> {
         double tf_idf;
         StringBuilder VSMStr = new StringBuilder();
 
+        //将单词和词频次数保存在Map中
         for (Text value:values){
             word = value.toString().split(",")[0];
             wordNum = Integer.parseInt(value.toString().split(",")[1]);
@@ -61,6 +62,7 @@ public class VSMReducer extends Reducer<Text, Text, Text, Text> {
             totalNum += wordNum;
         }
 
+        //遍历Map计算TF-IDF
         for (Map.Entry<String, Double> entry:wordNumMap.entrySet()){
             word = entry.getKey();
             tf = entry.getValue() / totalNum;
