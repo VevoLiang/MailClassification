@@ -17,7 +17,7 @@ import java.net.URI;
 /**
  * Created by Vevo on 2017/7/14.
  */
-public class ChildTask1 {
+public class Task1 {
     private static int reduceNum;
     private static Path stopWordFile;
     //每个类提取100个特征词
@@ -25,15 +25,15 @@ public class ChildTask1 {
 
     public static void main(String[] args) {
         stopWordFile = new Path(args[0]);
+        reduceNum = Integer.parseInt(args[3]);
         String in = args[1];
         String out = args[2];
-        reduceNum = Integer.parseInt(args[3]);
 
         try {
             String partPath = doParticiple(in, out);
             String wordInClassPath = getWordInClass(partPath, out);
             String classDocPath = getDocNum(partPath, out);
-            String extractionPath = doExtraction(classDocPath, wordInClassPath, out);
+            doExtraction(classDocPath, wordInClassPath, out);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -49,7 +49,7 @@ public class ChildTask1 {
         Configuration conf = new Configuration();
         Job participleJob = Job.getInstance(conf,"Participle");
         participleJob.addCacheFile(stopWordFile.toUri());
-        participleJob.setJarByClass(ChildTask1.class);
+        participleJob.setJarByClass(Task1.class);
         participleJob.setInputFormatClass(TextInputFormat.class);
         participleJob.setOutputFormatClass(TextOutputFormat.class);
         participleJob.setMapperClass(ParticipleMapper.class);
@@ -73,7 +73,7 @@ public class ChildTask1 {
         //为了减少内存消耗这里把计算单词在各类别出现文档数分为两个MapReduce完成（可合并）
         Configuration conf1 = new Configuration();
         Job wordInClassJob = Job.getInstance(conf1, "WordInClass");
-        wordInClassJob.setJarByClass(ChildTask1.class);
+        wordInClassJob.setJarByClass(Task1.class);
         wordInClassJob.setInputFormatClass(KeyValueTextInputFormat.class);
         wordInClassJob.setOutputFormatClass(TextOutputFormat.class);
         wordInClassJob.setMapperClass(WordInClassMapper.class);
@@ -88,7 +88,7 @@ public class ChildTask1 {
         //第二部分
         Configuration conf2 = new Configuration();
         Job wordInClassJob2 = Job.getInstance(conf2, "WordClassVector");
-        wordInClassJob2.setJarByClass(ChildTask1.class);
+        wordInClassJob2.setJarByClass(Task1.class);
         wordInClassJob2.setInputFormatClass(KeyValueTextInputFormat.class);
         wordInClassJob2.setOutputFormatClass(TextOutputFormat.class);
         wordInClassJob2.setMapperClass(WordInClass2Mapper.class);
@@ -109,7 +109,7 @@ public class ChildTask1 {
         //不设置reducer数量默认为1，方便计算总文档数
         Configuration conf = new Configuration();
         Job docNumJob = Job.getInstance(conf, "ClassDocNum");
-        docNumJob.setJarByClass(ChildTask1.class);
+        docNumJob.setJarByClass(Task1.class);
         docNumJob.setInputFormatClass(KeyValueTextInputFormat.class);
         docNumJob.setOutputFormatClass(TextOutputFormat.class);
         docNumJob.setMapperClass(DocNumMapper.class);
@@ -118,7 +118,7 @@ public class ChildTask1 {
         docNumJob.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(docNumJob, new Path(inputPath));
         Path classDocPath = new Path(outputPath + "/doc_num");
-        classDocPath.getFileSystem(conf).delete(classDocPath, true);
+        //classDocPath.getFileSystem(conf).delete(classDocPath, true);
         FileOutputFormat.setOutputPath(docNumJob, classDocPath);
         if(!docNumJob.waitForCompletion(true)){
             throw new RuntimeException("ClassDocNum MapReduce FAILED");
@@ -131,8 +131,8 @@ public class ChildTask1 {
         Configuration conf = new Configuration();
         //类别提取特征数量传入到全局参数,，要在创建Job之前
         conf.setInt("kEigenvector", kEigenvector);
-        Job extractJob = Job.getInstance(conf, "Extract");
-        extractJob.setJarByClass(ChildTask1.class);
+        Job extractJob = Job.getInstance(conf, "Extraction");
+        extractJob.setJarByClass(Task1.class);
         //将类别文档数放入到全局文件
         extractJob.addCacheFile(URI.create(cacheFilePath.toString() + "/part-r-00000"));
         extractJob.setInputFormatClass(KeyValueTextInputFormat.class);
@@ -143,7 +143,7 @@ public class ChildTask1 {
         extractJob.setMapOutputValueClass(Text.class);
         extractJob.setOutputKeyClass(Text.class);
         extractJob.setOutputValueClass(Text.class);
-        Path extractionPath = new Path(outputPath + "/extraction");
+        Path extractionPath = new Path(outputPath + "/eigenvector");
         FileInputFormat.addInputPath(extractJob, new Path(inputPath));
         FileOutputFormat.setOutputPath(extractJob, extractionPath);
         if(!extractJob.waitForCompletion(true)){
