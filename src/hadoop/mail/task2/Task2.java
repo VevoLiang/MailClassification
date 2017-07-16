@@ -42,26 +42,25 @@ public class Task2 {
     }
 
     private static String getTF(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
-//        Configuration conf1 = new Configuration();
-//        Job wordNumJob = Job.getInstance(conf1, "WordNumInDoc");
-//        wordNumJob.setJarByClass(Task2.class);
-//        wordNumJob.setInputFormatClass(KeyValueTextInputFormat.class);
-//        wordNumJob.setOutputFormatClass(TextOutputFormat.class);
-//        wordNumJob.setMapperClass(WordNumMapper.class);
-//        wordNumJob.setReducerClass(WordNumReducer.class);
-//        wordNumJob.setOutputKeyClass(Text.class);
-//        wordNumJob.setOutputValueClass(IntWritable.class);
-//        wordNumJob.setNumReduceTasks(reduceNum);
-//        FileInputFormat.addInputPath(wordNumJob, new Path(inputPath));
+        Configuration conf1 = new Configuration();
+        Job wordNumJob = Job.getInstance(conf1, "WordNumInDoc");
+        wordNumJob.addCacheFile(classIdPath.toUri()); //类别编号文件
+        wordNumJob.setJarByClass(Task2.class);
+        wordNumJob.setInputFormatClass(KeyValueTextInputFormat.class);
+        wordNumJob.setOutputFormatClass(TextOutputFormat.class);
+        wordNumJob.setMapperClass(WordNumMapper.class);
+        wordNumJob.setReducerClass(WordNumReducer.class);
+        wordNumJob.setOutputKeyClass(Text.class);
+        wordNumJob.setOutputValueClass(IntWritable.class);
+        wordNumJob.setNumReduceTasks(reduceNum);
+        FileInputFormat.addInputPath(wordNumJob, new Path(inputPath));
         String wordNumPath = outputPath + "/word_num_in_doc";
-//        FileOutputFormat.setOutputPath(wordNumJob, new Path(wordNumPath));
-//        wordNumJob.waitForCompletion(true);
+        FileOutputFormat.setOutputPath(wordNumJob, new Path(wordNumPath));
+        wordNumJob.waitForCompletion(true);
 
         Configuration conf2 = new Configuration();
         Job VSMJob = Job.getInstance(conf2, "TF-IDF/VSM");
-        //顺序必须为先类别编号文件再特征词文件
-        VSMJob.addCacheFile(classIdPath.toUri());
-        VSMJob.addCacheFile(eigenvectorPath.toUri());
+        VSMJob.addCacheFile(eigenvectorPath.toUri()); //特征词文件
         VSMJob.setJarByClass(Task2.class);
         VSMJob.setInputFormatClass(KeyValueTextInputFormat.class);
         VSMJob.setOutputFormatClass(TextOutputFormat.class);
