@@ -18,22 +18,19 @@ import java.net.URI;
  * Created by Vevo on 2017/7/14.
  */
 public class Task1 {
-    private static int reduceNum;
-    private static Path stopWordFile;
-    //每个类提取100个特征词
-    private static int kEigenvector = 100;
-
     public static void main(String[] args) {
-        stopWordFile = new Path(args[0]);
-        reduceNum = Integer.parseInt(args[3]);
+        //每个类提取100个特征词
+        int kEigenvector = 100;
+        Path stopWordFile = new Path(args[0]);
+        int reduceNum = Integer.parseInt(args[3]);
         String in = args[1];
         String out = args[2];
 
         try {
-            String partPath = doParticiple(in, out);
-            String wordInClassPath = getWordInClass(partPath, out);
+            String partPath = doParticiple(in, out, stopWordFile, reduceNum);
+            String wordInClassPath = getWordInClass(partPath, out, reduceNum);
             String classDocPath = getDocNum(partPath, out);
-            doExtraction(classDocPath, wordInClassPath, out);
+            doExtraction(classDocPath, wordInClassPath, out, kEigenvector);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -44,7 +41,7 @@ public class Task1 {
 
     }
 
-    private static String doParticiple(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+    public static String doParticiple(String inputPath, String outputPath, Path stopWordFile, int reduceNum) throws IOException, ClassNotFoundException, InterruptedException {
         //先进行分词，将类别文档转换成行存放在数据文件中（文档数量多且文件小时hadoop效率低）
         Configuration conf = new Configuration();
         Job participleJob = Job.getInstance(conf,"Participle");
@@ -69,7 +66,7 @@ public class Task1 {
         return partPath.toString();
     }
 
-    private static String getWordInClass(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+    private static String getWordInClass(String inputPath, String outputPath, int reduceNum) throws IOException, ClassNotFoundException, InterruptedException {
         //为了减少内存消耗这里把计算单词在各类别出现文档数分为两个MapReduce完成（可合并）
         Configuration conf1 = new Configuration();
         Job wordInClassJob = Job.getInstance(conf1, "WordInClass");
@@ -126,7 +123,7 @@ public class Task1 {
         return classDocPath.toString();
     }
 
-    private static String doExtraction(String cacheFilePath, String inputPath, String outputPath) throws InterruptedException, IOException, ClassNotFoundException {
+    private static String doExtraction(String cacheFilePath, String inputPath, String outputPath, int kEigenvector) throws InterruptedException, IOException, ClassNotFoundException {
         //由于Reducer默认为1，所以可以直接合并所有特征词并编号
         Configuration conf = new Configuration();
         //类别提取特征数量传入到全局参数,，要在创建Job之前

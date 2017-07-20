@@ -28,6 +28,8 @@
       <root url="jar://$PROJECT_DIR$/lib/hadoop-client/hadoop-hdfs-2.7.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hadoop-client/hadoop-mapreduce-client-common-2.7.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hadoop-client/hadoop-mapreduce-client-core-2.7.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lucene-analyzers-common-5.5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lucene-core-5.5.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

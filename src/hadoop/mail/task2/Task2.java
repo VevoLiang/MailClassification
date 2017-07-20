@@ -16,22 +16,20 @@ import java.io.IOException;
  * Created by Vevo on 2017/7/16.
  */
 public class Task2 {
-    //完整的类别编号文件路径
-    private static Path classIdPath;
-    private static Path eigenvectorPath;
-    private static int reduceNum;
+
 
     public static void main(String[] args) {
         //输入应该为：task1输出目录 task2输出目录 reduce数量
-        classIdPath = new Path(args[0] + "/doc_num/part-r-00000");
-        eigenvectorPath = new Path(args[0] + "/eigenvector/part-r-00000");
-        reduceNum = Integer.parseInt(args[2]);
+        //完整的类别编号文件路径
+        Path classIdPath = new Path(args[0] + "/doc_num/part-r-00000");
+        Path eigenvectorPath = new Path(args[0] + "/eigenvector/part-r-00000");
+        int reduceNum = Integer.parseInt(args[2]);
         //输入路径应该是分词后的文档路径
         String in = args[0] + "/part";
         String out = args[1];
 
         try {
-            getTF(in, out);
+            getTF(in, out, classIdPath, eigenvectorPath, reduceNum);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -41,7 +39,7 @@ public class Task2 {
         }
     }
 
-    private static String getTF(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+    public static String getTF(String inputPath, String outputPath, Path classIdPath, Path eigenvectorPath, int reduceNum) throws IOException, ClassNotFoundException, InterruptedException {
         //先计算词频次数
         Configuration conf1 = new Configuration();
         Job wordNumJob = Job.getInstance(conf1, "WordNumInDoc");
