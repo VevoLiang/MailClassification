@@ -33,7 +33,7 @@ public class Task3 {
 
         try {
             String testPart = Task1.doParticiple(in, out, stopWordPath, reduceNum);
-            //TODO
+            Task2.getTF(testPart, out, classIdPath, eigenvectorPath, reduceNum);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
