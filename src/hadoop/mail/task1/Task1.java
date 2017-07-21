@@ -19,8 +19,8 @@ import java.net.URI;
  */
 public class Task1 {
     public static void main(String[] args) {
-        //每个类提取100个特征词
-        int kEigenvector = 100;
+        //每个类提取1000个特征词
+        int kEigenvector = 1000;
         Path stopWordFile = new Path(args[0]);
         int reduceNum = Integer.parseInt(args[3]);
         String in = args[1];

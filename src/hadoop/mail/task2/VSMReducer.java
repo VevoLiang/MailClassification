@@ -73,7 +73,11 @@ public class VSMReducer extends Reducer<Text, Text, Text, Text> {
                 }
             }
         }
-        VSMStr.deleteCharAt(VSMStr.length()-1);
+        if(VSMStr.length() > 0){
+            VSMStr.deleteCharAt(VSMStr.length()-1);
+        }else{
+            VSMStr.append(0);
+        }
         context.write(new Text(classId), new Text(VSMStr.toString()));
     }
 }
