@@ -73,6 +73,7 @@ public class VSMReducer extends Reducer<Text, Text, Text, Text> {
                 }
             }
         }
+        //需要处理文档单词都不在特征集中的情况
         if(VSMStr.length() > 0){
             VSMStr.deleteCharAt(VSMStr.length()-1);
         }else{
