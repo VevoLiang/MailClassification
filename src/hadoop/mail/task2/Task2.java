@@ -27,7 +27,7 @@ public class Task2 {
         int reduceNum = Integer.parseInt(args[2]);
 
         try {
-            getTF(in, out, classIdPath, eigenvectorPath, reduceNum);
+            getTFIDF(in, out, classIdPath, eigenvectorPath, reduceNum);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -37,7 +37,7 @@ public class Task2 {
         }
     }
 
-    public static String getTF(String inputPath, String outputPath, Path classIdPath, Path eigenvectorPath, int reduceNum) throws IOException, ClassNotFoundException, InterruptedException {
+    public static String getTFIDF(String inputPath, String outputPath, Path classIdPath, Path eigenvectorPath, int reduceNum) throws IOException, ClassNotFoundException, InterruptedException {
         //先计算词频次数
         Configuration conf1 = new Configuration();
         Job wordNumJob = Job.getInstance(conf1, "WordNumInDoc");

@@ -65,9 +65,9 @@ public class VSMReducer extends Reducer<Text, Text, Text, Text> {
         //遍历Map计算TF-IDF
         for (Map.Entry<String, Double> entry:wordNumMap.entrySet()){
             word = entry.getKey();
-            tf = entry.getValue() / totalNum;
             if(eigenvectorMap.containsKey(word)){
-                tf_idf = tf * eigenvectorMap.get(word).idf;
+                tf = entry.getValue() / totalNum;
+                tf_idf = tf * (eigenvectorMap.get(word).idf);
                 if(tf_idf != 0.0){
                     VSMStr.append(eigenvectorMap.get(word).id).append(":").append(tf_idf).append(" ");
                 }

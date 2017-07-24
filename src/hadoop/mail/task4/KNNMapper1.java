@@ -1,7 +1,6 @@
 package hadoop.mail.task4;
 
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -13,9 +12,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Created by Vevo on 2017/7/21.
+ * Created by Vevo on 2017/7/23.
  */
-public class KNNMapper extends Mapper<Text, Text, Text, IntWritable> {
+public class KNNMapper1 extends Mapper<Text, Text, Text, Text> {
     private int k;
     private SimilarityHolder kClass;
     private LinkedList<String> trainData;
@@ -59,11 +58,7 @@ public class KNNMapper extends Mapper<Text, Text, Text, IntWritable> {
             predictClass = "-1";
         }
 
-        if (predictClass.equals(originClass)){
-            context.write(new Text("true"), new IntWritable(1));
-        }else{
-            context.write(new Text("false"), new IntWritable(1));
-        }
+        context.write(new Text(originClass + " -> " + predictClass), new Text(kClass.toString()));
     }
 
     private double getSimilarity(String train, String test){

@@ -18,10 +18,10 @@ import java.net.URI;
  * Created by Vevo on 2017/7/21.
  */
 public class Task4 {
-    //输入应该为：[训练VSM路径]  [测试VSM路径]  [预测结果输出路径]  [KNN中的k值]
+    //输入应该为：[Task2输出路径路径]  [Task3输出路径]  [预测结果输出路径]  [KNN中的k值]
     public static void main(String[] args) {
-        String trainPath = args[0];
-        String testPath = args[1];
+        String trainPath = args[0] + "/tf_idf";
+        String testPath = args[1] + "/tf_idf";
         String outPath = args[2];
         int k = Integer.parseInt(args[3]); //KNN中的K
 
@@ -45,12 +45,14 @@ public class Task4 {
         KNNJob.setJarByClass(Task4.class);
         KNNJob.setMapperClass(KNNMapper.class);
         KNNJob.setReducerClass(KNNReducer.class);
+//        KNNJob.setMapperClass(KNNMapper1.class);
+//        KNNJob.setReducerClass(KNNReducer1.class);
         KNNJob.setInputFormatClass(KeyValueTextInputFormat.class);
         KNNJob.setOutputFormatClass(TextOutputFormat.class);
         KNNJob.setMapOutputKeyClass(Text.class);
         KNNJob.setMapOutputValueClass(IntWritable.class);
         KNNJob.setOutputKeyClass(Text.class);
-        KNNJob.setOutputValueClass(DoubleWritable.class);
+        KNNJob.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(KNNJob, new Path(test));
         FileOutputFormat.setOutputPath(KNNJob, new Path(out));
         if(!KNNJob.waitForCompletion(true)){

@@ -18,14 +18,14 @@ import java.net.URI;
  * Created by Vevo on 2017/7/14.
  */
 public class Task1 {
-    //输入参数为：[停词表路径] [task1输入路径(训练集)] [task2输出路径] [reduceNum]
+    //输入参数为：[停词表路径] [task1输入路径(训练集)] [task1输出路径] [reduceNum] [每个类别的特征数]
     public static void main(String[] args) {
-        //每个类提取1000个特征词
-        int kEigenvector = 1000;
         Path stopWordFile = new Path(args[0]);
         String in = args[1];
         String out = args[2];
         int reduceNum = Integer.parseInt(args[3]);
+        //每个类提取1000个特征词
+        int kEigenvector = Integer.parseInt(args[4]);
 
         try {
             String partPath = doParticiple(in, out, stopWordFile, reduceNum);
