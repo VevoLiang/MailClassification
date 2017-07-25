@@ -24,7 +24,6 @@ public class Task1 {
         String in = args[1];
         String out = args[2];
         int reduceNum = Integer.parseInt(args[3]);
-        //每个类提取1000个特征词
         int kEigenvector = Integer.parseInt(args[4]);
 
         try {

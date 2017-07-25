@@ -22,14 +22,6 @@ public class SimilarityHolder {
             this.similarity = similarity;
         }
 
-        public String getClassId() {
-            return classId;
-        }
-
-        public double getSimilarity() {
-            return similarity;
-        }
-
         @Override
         public String toString() {
             return classId + ':' + similarity;
@@ -40,14 +32,6 @@ public class SimilarityHolder {
         this.holder = new ClassSimilarity[k];
         currentSize = 0;
         size = k;
-    }
-
-    public int getSize(){
-        return size;
-    }
-
-    public int getCurrentSize(){
-        return currentSize;
     }
 
     /*
@@ -64,7 +48,7 @@ public class SimilarityHolder {
         int insertPos = 0;
         if(currentSize < size){
             while(insertPos < currentSize){
-                if(similarity < holder[insertPos].getSimilarity()){
+                if(similarity < holder[insertPos].similarity){
                     break;
                 }
                 insertPos ++;
@@ -77,33 +61,31 @@ public class SimilarityHolder {
             return;
         }
 
-        if(similarity > holder[insertPos].getSimilarity()){
-            while(insertPos < size){
-                if(similarity < holder[insertPos].getSimilarity()){
-                    break;
-                }
-                insertPos++;
+        while(insertPos < size){
+            if(similarity < holder[insertPos].similarity){
+                break;
             }
-            insertPos -= 1;
-
-            if(insertPos < 0){
-                return;
-            }
-            for(int i = 0; i < insertPos; i++){
-                holder[i] = holder[i+1];
-            }
-            holder[insertPos] = classSimilarity;
+            insertPos++;
         }
+        insertPos -= 1;
+
+        if(insertPos < 0){
+            return;
+        }
+        for(int i = 0; i < insertPos; i++){
+            holder[i] = holder[i+1];
+        }
+        holder[insertPos] = classSimilarity;
     }
 
     public String predictClass(){
         HashMap<String, Double> classMap = new HashMap<>();
         for (int i=0; i < currentSize; i++){
-            double weight = holder[i].getSimilarity(); //相似度作为权值
-            if(classMap.containsKey(holder[i].getClassId())){
-                weight += classMap.get(holder[i].getClassId());
+            double weight = holder[i].similarity; //相似度作为权值
+            if(classMap.containsKey(holder[i].classId)){
+                weight += classMap.get(holder[i].classId);
             }
-            classMap.put(holder[i].getClassId(), weight);
+            classMap.put(holder[i].classId, weight);
         }
 
         double maxWeight = Double.MIN_VALUE;
