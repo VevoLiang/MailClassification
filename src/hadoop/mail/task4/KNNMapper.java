@@ -15,9 +15,9 @@ import java.util.Map;
 /**
  * Created by Vevo on 2017/7/21.
  */
-public class KNNMapper extends Mapper<Text, Text, Text, IntWritable> {
+public class KNNMapper extends Mapper<Text, Text, Text, Text> {
     private int k;
-    private SimilarityHolder kClass;
+    private DistanceHolder kHolder;
     private LinkedList<String> trainData;
 
     @Override
@@ -32,12 +32,13 @@ public class KNNMapper extends Mapper<Text, Text, Text, IntWritable> {
             trainData.add(str);
             str = reader.readLine();
         }
+        reader.close();
     }
 
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
         if (k > 0){
-            kClass = new SimilarityHolder(k);
+            kHolder = new DistanceHolder(k);
         }else {
             throw new RuntimeException("K cannot be less than or equal to 0");
         }
@@ -45,63 +46,20 @@ public class KNNMapper extends Mapper<Text, Text, Text, IntWritable> {
         String testVSM = value.toString();
         String trainClass;
         String trainVSM;
-        double similarity = 0.0;
+        double distance = 0.0;
         String predictClass;
         if (!"0".equals(testVSM)){
             for (String trainStr:trainData){
                 trainClass = trainStr.split("\t")[0];
                 trainVSM = trainStr.split("\t")[1];
-                similarity = getSimilarity(trainVSM, testVSM);
-                kClass.insert(trainClass, similarity);
+                distance = DistanceUtil.getDistance(trainVSM, testVSM);
+                kHolder.insert(trainClass, distance);
             }
-            predictClass = kClass.predictClass();
+            predictClass = kHolder.predictClass();
         }else{
             predictClass = "-1";
         }
 
-        if (predictClass.equals(originClass)){
-            context.write(new Text("true"), new IntWritable(1));
-        }else{
-            context.write(new Text("false"), new IntWritable(1));
-        }
-    }
-
-    private double getSimilarity(String train, String test){
-        if (test.equals("0")){
-            return 0.0; //理论上达不到这里，以防万一
-        }
-        String[] trainVSM = train.split(" ");
-        String[] testVSM = test.split(" ");
-        String eigenvector;
-        double vectorValue;
-        double similarity = 0.0;
-        HashMap<String, Double> VSMMap = new HashMap<>();
-
-        for (String str:trainVSM){
-            eigenvector = str.split(":")[0];
-            vectorValue = Double.parseDouble(str.split(":")[1]);
-            VSMMap.put(eigenvector, vectorValue);
-        }
-        for (String str:testVSM){
-            eigenvector = str.split(":")[0];
-            vectorValue = Double.parseDouble(str.split(":")[1]);
-            if(VSMMap.containsKey(eigenvector)){
-                double trainValue = VSMMap.get(eigenvector);
-                VSMMap.put(eigenvector, trainValue-vectorValue);
-            }
-        }
-        for(Map.Entry<String, Double> entry:VSMMap.entrySet()){
-            eigenvector = entry.getKey();
-            vectorValue = entry.getValue();
-            VSMMap.put(eigenvector, Math.pow(vectorValue, 2));
-        }
-
-        for(Map.Entry<String, Double> entry:VSMMap.entrySet()){
-            similarity += entry.getValue();
-        }
-        //如果觉得没必要可以去掉平方根
-        similarity = 1/(1+Math.sqrt(similarity));
-
-        return similarity;
+        context.write(new Text(originClass + " " + predictClass), new Text(kHolder.toString()));
     }
 }

@@ -9,26 +9,11 @@ import java.io.IOException;
 /**
  * Created by Vevo on 2017/7/21.
  */
-public class KNNReducer extends Reducer<Text, IntWritable, Text, Text> {
-    private double trueCount = 0;
-    private double falseCount = 0;
-
+public class KNNReducer extends Reducer<Text, Text, Text, Text> {
     @Override
-    protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-        int value = 0;
-        for (IntWritable i:values){
-            value += i.get();
+    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        for(Text value:values){
+            context.write(key, value);
         }
-        if(key.toString().equals("true")){
-            trueCount += value;
-        }else{
-            falseCount += value;
-        }
-    }
-
-    @Override
-    protected void cleanup(Context context) throws IOException, InterruptedException {
-        context.write(new Text("Correct rate:"), new Text(trueCount/(trueCount+falseCount) * 100 + "%"));
-        super.cleanup(context);
     }
 }
