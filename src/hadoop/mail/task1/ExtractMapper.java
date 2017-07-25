@@ -16,7 +16,6 @@ import java.util.HashMap;
 public class ExtractMapper extends Mapper<Text, Text, Text, Text> {
     private HashMap<String, Integer> classDocNum;
     private HashMap<String, String> classIds;
-    private Logger logger = Logger.getLogger(ExtractMapper.class);
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -37,12 +36,11 @@ public class ExtractMapper extends Mapper<Text, Text, Text, Text> {
             lineStr = reader.readLine();
         }
         reader.close();
-        logger.warn("Read successfully");
     }
 
     @Override
     protected void map(Text key, Text value, Context context) throws IOException, InterruptedException {
-        String[] wordInClazz = value.toString().split(","); //数组每个字符串为class:num
+        String[] wordInClazz = value.toString().split(","); //数组每个子字符串为class:num
         String keyStr = key.toString();
         String word = keyStr.substring(0, keyStr.lastIndexOf(":"));
         int wordInDocNum = Integer.parseInt(keyStr.substring(keyStr.lastIndexOf(":")+1,keyStr.length()));
@@ -50,15 +48,18 @@ public class ExtractMapper extends Mapper<Text, Text, Text, Text> {
         int N10 = 0;
         int N01 = 0;
         int N00 = 0;
-        double v = 0.0;
+        double IGValue = 0.0;
+        double idf = 0.0;
         for(String wordInClass:wordInClazz){
             String classLabel = wordInClass.split(":")[0];
             N11 = Integer.parseInt(wordInClass.split(":")[1]);
             N10 = wordInDocNum - N11;
             N01 = classDocNum.get(classLabel) - N11;
-            N00 = classDocNum.get("Total") - classDocNum.get(classLabel) - N01;
-            v = Math.pow((N11*N00 - N10*N01), 2)/((N11 + N10)*(N01 + N00));
-            context.write(new Text(classIds.get(classLabel)), new Text(word + ":" + v));
+            N00 = classDocNum.get("Total") - wordInDocNum - N01;
+            IGValue = Math.pow((N11*N00 - N10*N01), 2)/((N11 + N10)*(N01 + N00));
+            idf = Math.log(classDocNum.get("Total") / (wordInDocNum+1));
+            context.write(new Text(classIds.get(classLabel)),
+                    new Text(word + ":" + IGValue + "," + idf));
         }
     }
 }
