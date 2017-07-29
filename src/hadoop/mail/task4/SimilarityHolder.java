@@ -34,49 +34,6 @@ public class SimilarityHolder {
         size = k;
     }
 
-    /*
-    保证按相似度从小到大排序
-     */
-//    public void insert(String classId, double similarity){
-//        ClassSimilarity classSimilarity = new ClassSimilarity(classId, similarity);
-//
-//        if(currentSize <= 0){
-//            holder[currentSize++] = classSimilarity;
-//            return;
-//        }
-//
-//        int insertPos = 0;
-//        if(currentSize < size){
-//            while(insertPos < currentSize){
-//                if(similarity < holder[insertPos].similarity){
-//                    break;
-//                }
-//                insertPos ++;
-//            }
-//            for(int i = currentSize; i > insertPos; i--){
-//                holder[i] = holder[i-1];
-//            }
-//            holder[insertPos] = classSimilarity;
-//            currentSize++;
-//            return;
-//        }
-//
-//        while(insertPos < size){
-//            if(similarity < holder[insertPos].similarity){
-//                break;
-//            }
-//            insertPos++;
-//        }
-//        insertPos -= 1;
-//
-//        if(insertPos < 0){
-//            return;
-//        }
-//        for(int i = 0; i < insertPos; i++){
-//            holder[i] = holder[i+1];
-//        }
-//        holder[insertPos] = classSimilarity;
-//    }
     public void insert(String classId, double similarity){
         ClassSimilarity classSimilarity = new ClassSimilarity(classId, similarity);
 
@@ -89,8 +46,8 @@ public class SimilarityHolder {
         double min = similarity;
         for(int i=0; i<size; i++){
             if(min > holder[i].similarity){
-                min = holder[i].similarity;
                 insertPos = i;
+                min = holder[i].similarity;
             }
         }
         if(insertPos >= 0){
